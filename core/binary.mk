@@ -76,6 +76,13 @@ else
   installed_shared_library_module_names := \
       $(LOCAL_SYSTEM_SHARED_LIBRARIES) $(LOCAL_SHARED_LIBRARIES)
 endif
+
+ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
+  LOCAL_CFLAGS += -fpie
+else
+  LOCAL_CFLAGS += -fPIC
+endif
+
 installed_shared_library_module_names := $(sort $(installed_shared_library_module_names))
 
 #######################################
