@@ -6,6 +6,20 @@
 ##
 ###########################################################
 
+ifneq (true,$(WITH_DEXPREOPT))
+  LOCAL_DEX_PREOPT :=
+else
+  ifndef LOCAL_DEX_PREOPT
+    LOCAL_DEX_PREOPT := $(DEX_PREOPT_DEFAULT)
+  endif
+endif
+ifeq (false,$(LOCAL_DEX_PREOPT))
+  LOCAL_DEX_PREOPT :=
+endif
+ifeq ($(filter APPS JAVA_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
+  LOCAL_DEX_PREOPT :=
+endif
+
 ifneq ($(LOCAL_PREBUILT_LIBS),)
 $(error dont use LOCAL_PREBUILT_LIBS anymore LOCAL_PATH=$(LOCAL_PATH))
 endif
@@ -27,6 +41,7 @@ endif
 
 ifdef LOCAL_IS_HOST_MODULE
   my_prefix := HOST_
+  LOCAL_DEX_PREOPT :=
 else
   my_prefix := TARGET_
 endif
@@ -144,17 +159,39 @@ else
   $(built_module) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
 endif
 
+ifdef LOCAL_DEX_PREOPT
+  $(built_module) : $(DEXPREOPT_BOOT_ODEXS) | $(DEXPREOPT) $(DEXOPT)
+endif
 ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
 ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
 # Ensure that presigned .apks have been aligned.
-$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN)
-	$(transform-prebuilt-to-target-with-zipalign)
+$(built_module) : $(my_prebuilt_src_file) | $(ACP) $(ZIPALIGN)
+	$(transform-prebuilt-to-target)
+ifdef LOCAL_DEX_PREOPT
+	$(hide) rm -f $(patsubst %.apk,%.odex,$@)
+	$(call dexpreopt-one-file,$@,$(patsubst %.apk,%.odex,$@))
+ifneq (nostripping,$(LOCAL_DEX_PREOPT))
+	$(call dexpreopt-remove-classes.dex,$@)
+endif
+endif
+	$(align-package)
 else
 # Sign and align non-presigned .apks.
 $(built_module) : $(my_prebuilt_src_file) | $(ACP) $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
 	$(sign-package)
+ifdef LOCAL_DEX_PREOPT
+	$(hide) rm -f $(patsubst %.apk,%.odex,$@)
+	$(call dexpreopt-one-file,$@,$(patsubst %.apk,%.odex,$@))
+ifneq (nostripping,$(LOCAL_DEX_PREOPT))
+	$(call dexpreopt-remove-classes.dex,$@)
+endif
+endif
 	$(align-package)
+endif
+ifdef LOCAL_DEX_PREOPT
+built_odex := $(basename $(built_module)).odex
+$(built_odex) : $(built_module)
 endif
 else
 ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
@@ -169,6 +206,15 @@ ifneq ($(prebuilt_module_is_a_library),)
   else
 	$(transform-ranlib-copy-hack)
   endif
+endif
+ifdef LOCAL_DEX_PREOPT
+	$(hide) rm -f $(patsubst %.jar,%.odex,$@)
+	$(call dexpreopt-one-file,$@,$(patsubst %.jar,%.odex,$@))
+ifneq (nostripping,$(LOCAL_DEX_PREOPT))
+	$(call dexpreopt-remove-classes.dex,$@)
+endif
+built_odex := $(basename $(built_module)).odex
+$(built_odex) : $(built_module)
 endif
 endif
 endif
