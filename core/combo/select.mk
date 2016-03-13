@@ -46,15 +46,15 @@ $(combo_target)HAVE_STRLCPY := 0
 $(combo_target)HAVE_STRLCAT := 0
 $(combo_target)HAVE_KERNEL_MODULES := 0
 
+# ArchiDroid
+include $(BUILD_SYSTEM)/archidroid.mk
+
 $(combo_target)GLOBAL_CFLAGS := -fno-exceptions -Wno-multichar
-ifeq ($(TARGET_USE_03),true)
-$(combo_target)RELEASE_CFLAGS := -O3 -g -fno-strict-aliasing
-$(combo_target)GLOBAL_LDFLAGS := -Wl,-O3
-else
-$(combo_target)RELEASE_CFLAGS := -Os -g -fno-strict-aliasing
+$(combo_target)RELEASE_CFLAGS := $(ARCHIDROID_GCC_CFLAGS_ARM) -fno-strict-aliasing
+$(combo_target)GLABAL_CPPFLAGS :=
 $(combo_target)GLOBAL_LDFLAGS :=
-endif
-$(combo_target)GLOBAL_ARFLAGS := crsP
+$(combo_target)GLOBAL_ARFLAGS := crsPD
+$(combo_target)GLABAL_LD_DIRS :=
 
 $(combo_target)EXECUTABLE_SUFFIX :=
 $(combo_target)SHLIB_SUFFIX := .so

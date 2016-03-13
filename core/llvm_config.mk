@@ -12,12 +12,24 @@ define clang-flags-subst
   $(eval $(call do-clang-flags-subst,$(1),$(2)))
 endef
 
-
-CLANG_CONFIG_EXTRA_CFLAGS := \
-  -D__compiler_offsetof=__builtin_offsetof \
+# ArchiDroid
+#include $(BUILD_SYSTEM)/archidroid.mk
+CLANG_CONFIG_EXTRA_CFLAGS += $(ARCHIDROID_CLANG_CFLAGS)
+CLANG_CONFIG_EXTRA_CPPFLAGS += $(ARCHIDROID_CLANG_CPPFLAGS)
+CLANG_CONFIG_EXTRA_LDFLAGS += $(ARCHIDROID_CLANG_LDFLAGS)
 
 CLANG_CONFIG_UNKNOWN_CFLAGS := \
-  -funswitch-loops
+  $(ARCHIDROID_CLANG_UNKNOWN_FLAGS) \
+  -funswitch-loops \
+  -fno-tree-sra \
+  -finline-limit=64 \
+  -Wno-psabi \
+  -Wno-unused-but-set-variable \
+  -Wno-unused-but-set-parameter \
+  -Wmaybe-uninitialized \
+  -Wno-maybe-uninitialized \
+  -Wno-error=maybe-uninitialized \
+  -fno-canonical-system-headers
 
 ifeq ($(TARGET_ARCH),arm)
   RS_TRIPLE := armv7-none-linux-gnueabi
