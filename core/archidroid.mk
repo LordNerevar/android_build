@@ -30,7 +30,7 @@ ARCHIDROID_GCC_CFLAGS_ARM := -O3
 ARCHIDROID_GCC_CFLAGS_THUMB := -O3
 
 # Additional flags passed to all C targets compiled with GCC
-ARCHIDROID_GCC_CFLAGS := -O3 -fgcse-las -fgcse-sm -fipa-pta -fivopts -fomit-frame-pointer -frename-registers -fsection-anchors -ftracer -ftree-loop-im -ftree-loop-ivcanon -funsafe-loop-optimizations -funswitch-loops -fweb -Wno-error=array-bounds -Wno-error=clobbered -Wno-error=maybe-uninitialized -Wno-error=strict-overflow -Wno-unused-parameter
+ARCHIDROID_GCC_CFLAGS := -O3 -pipe -fgcse-las -fgcse-sm -fipa-pta -fivopts -fomit-frame-pointer -frename-registers -fsection-anchors -ftracer -ftree-loop-im -ftree-loop-ivcanon -funsafe-loop-optimizations -funswitch-loops -fweb -Wno-error=array-bounds -Wno-error=clobbered -Wno-error=maybe-uninitialized -Wno-error=strict-overflow -Wno-unused-parameter
 
 ############################
 ### EXPERIMENTAL SECTION ###
@@ -58,7 +58,7 @@ ARCHIDROID_GCC_CFLAGS += -fgraphite -fgraphite-identity
 ARCHIDROID_GCC_CPPFLAGS := $(ARCHIDROID_GCC_CFLAGS)
 
 # Flags passed to linker (ld) of all C and C++ targets compiled with GCC
-ARCHIDROID_GCC_LDFLAGS := -Wl,--sort-common
+ARCHIDROID_GCC_LDFLAGS := -Wl,-O3 -Wl,--as-needed -Wl,--relax -Wl,--sort-common
 
 #####################
 ### CLANG SECTION ###
@@ -71,7 +71,7 @@ ARCHIDROID_CLANG_CFLAGS := -O3 -Qunused-arguments -Wno-unknown-warning-option
 ARCHIDROID_CLANG_CPPFLAGS := $(ARCHIDROID_CLANG_CFLAGS)
 
 # Flags passed to linker (ld) of all C and C++ targets compiled with CLANG
-ARCHIDROID_CLANG_LDFLAGS := -Wl,--sort-common
+ARCHIDROID_CLANG_LDFLAGS := $(ARCHIDROID_GCC_LDFLAGS)
 
 # Flags that are used by GCC, but are unknown to CLANG. If you get "argument unused during compilation" error, add the flag here
 ARCHIDROID_CLANG_UNKNOWN_FLAGS := \
@@ -83,6 +83,7 @@ ARCHIDROID_CLANG_UNKNOWN_FLAGS := \
   -fgraphite \
   -fgraphite-identity \
   -fipa-pta \
+  -fivopts \
   -floop-block \
   -floop-interchange \
   -floop-nest-optimize \
@@ -97,6 +98,7 @@ ARCHIDROID_CLANG_UNKNOWN_FLAGS := \
   -frerun-cse-after-loop \
   -frename-registers \
   -fsection-anchors \
+  -ftracer \
   -ftree-loop-im \
   -ftree-loop-ivcanon \
   -funsafe-loop-optimizations \
