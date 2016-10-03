@@ -68,7 +68,7 @@ ifeq "" "$(PLATFORM_SECURITY_PATCH)"
   # Can be an arbitrary string, but must be a single word.
   #
   # If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-  PLATFORM_SECURITY_PATCH := 2016-08-01
+  PLATFORM_SECURITY_PATCH := 2016-09-01
 endif
 
 ifeq "" "$(PLATFORM_BASE_OS)"
@@ -90,14 +90,6 @@ ifeq "" "$(DEFAULT_APP_TARGET_SDK)"
   else
     DEFAULT_APP_TARGET_SDK := $(PLATFORM_VERSION_CODENAME)
   endif
-endif
-
-ifeq "" "$(PLATFORM_SECURITY_PATCH)"
-  # Used to indicate the security patch that has been applied to the device.
-  # Can be an arbitrary string, but must be a single word.
-  #
-  # If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-  PLATFORM_SECURITY_PATCH := 2015-12-01
 endif
 
 ifeq "" "$(BUILD_ID)"
