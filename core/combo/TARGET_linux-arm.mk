@@ -35,13 +35,13 @@ TARGET_ARCH_VARIANT := armv5te
 endif
 
 ifeq ($(strip $(TARGET_GCC_VERSION_EXP)),)
-TARGET_GCC_VERSION := 4.8-$(TARGET_CPU_VARIANT)
+TARGET_GCC_VERSION := 4.8
 else
 TARGET_GCC_VERSION := $(TARGET_GCC_VERSION_EXP)
 endif
 
 ifeq ($(strip $(TARGET_KERNEL_GCC_VERSION_EXP)),)
-TARGET_KERNEL_GCC_VERSION := 4.8-$(TARGET_CPU_VARIANT)
+TARGET_KERNEL_GCC_VERSION := 4.8
 else
 TARGET_KERNEL_GCC_VERSION := $(TARGET_KERNEL_GCC_VERSION_EXP)
 endif
@@ -128,9 +128,14 @@ TARGET_GLOBAL_CFLAGS += \
 # We cannot turn it off blindly since the option is not available
 # in gcc-4.4.x.  We also want to disable sincos optimization globally
 # by turning off the builtin sin function.
-ifneq ($(filter 4.6 4.6.% 4.7 4.7.% 4.8 4.8.% 4.9 4.9.%, $(TARGET_GCC_VERSION)),)
+ifneq ($(filter 4.6 4.6.% 4.7 4.7.% 4.8 4.8.% 4.9 4.9.% 5.%, $(TARGET_GCC_VERSION)),)
 TARGET_GLOBAL_CFLAGS += -fno-builtin-sin \
                        -fno-strict-volatile-bitfields
+endif
+
+# This optimization causes dalvik not to build with gcc 5.x.
+ifneq ($(filter 5.%, $(TARGET_GCC_VERSION)),)
+TARGET_GLOBAL_CFLAGS += -fno-tree-slp-vectorize
 endif
 
 # This is to avoid the dreaded warning compiler message:
