@@ -24,13 +24,13 @@
 #######################
 
 # General optimization level of target ARM compiled with GCC. Default: -O2
-ARCHIDROID_GCC_CFLAGS_ARM := -O2
+ARCHIDROID_GCC_CFLAGS_ARM := -O2 -g
 
 # General optimization level of target THUMB compiled with GCC. Default: -Os
-ARCHIDROID_GCC_CFLAGS_THUMB := -O2
+ARCHIDROID_GCC_CFLAGS_THUMB := -O2 -g
 
 # Additional flags passed to all C targets compiled with GCC
-ARCHIDROID_GCC_CFLAGS := -O2 -pipe -fomit-frame-pointer -funswitch-loops -Wno-error=array-bounds -Wno-error=clobbered -Wno-error=maybe-uninitialized -Wno-error=strict-overflow -Wno-unused-parameter
+ARCHIDROID_GCC_CFLAGS := -O2 -g -pipe -fomit-frame-pointer -funswitch-loops -Wno-error=array-bounds -Wno-error=clobbered -Wno-error=maybe-uninitialized -Wno-error=strict-overflow -Wno-unused-parameter
 
 ############################
 ### EXPERIMENTAL SECTION ###
@@ -65,7 +65,7 @@ ARCHIDROID_GCC_LDFLAGS := -Wl,-O2 -Wl,--as-needed -Wl,--relax -Wl,--sort-common
 #####################
 
 # Flags passed to all C targets compiled with CLANG
-ARCHIDROID_CLANG_CFLAGS := -O2 -Qunused-arguments -Wno-unknown-warning-option
+ARCHIDROID_CLANG_CFLAGS := -O2 -g -Qunused-arguments -Wno-unknown-warning-option
 
 # Flags passed to CLANG preprocessor for C and C++
 ARCHIDROID_CLANG_CPPFLAGS := $(ARCHIDROID_CLANG_CFLAGS)
